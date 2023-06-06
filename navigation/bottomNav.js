@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import FormScreen from '../screens/addForm';
-import HomeScreen from '../screens/Home';
+import GalleryScreen from '../screens/Gallery';
 
 const Tab = createBottomTabNavigator();
 
@@ -10,12 +10,13 @@ const BottomTabNavigator = () => {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
+                headerShown: false, // Hide the header for all screens in the bottom tab navigator
                 tabBarIcon: ({ color, size }) => {
                     let iconName;
 
                     if (route.name === 'Form') {
                         iconName = 'document-outline';
-                    } else if (route.name === 'Home') {
+                    } else if (route.name === 'Gallery') {
                         iconName = 'home-outline';
                     } else if (route.name === 'Admin') {
                         iconName = 'person-outline';
@@ -24,10 +25,12 @@ const BottomTabNavigator = () => {
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
             })}
+            tabBarOptions={{
+                showLabel: false, // Hide the label of the tabs
+            }}
         >
             <Tab.Screen name="Form" component={FormScreen} />
-            <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Admin" component={FormScreen} />
+            <Tab.Screen name="Gallery" component={GalleryScreen} />
         </Tab.Navigator>
     );
 };

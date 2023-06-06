@@ -10,16 +10,18 @@ const data = [
     { id: '6', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysxOhsimPRxuFU2WaY8jnTooe2SAaq6ptMvfCmrQmxZ1bsx7VDnmfWWsHm1wuyKcH46M&usqp=CAU' },
 ];
 
-const Item = ({ image }) => (
-    <TouchableOpacity style={styles.touchable} onPress={() => console.log('Image clicked!')}>
+const Item = ({ image, onSelectDoorImage }) => (
+    <TouchableOpacity style={styles.touchable} onPress={() => onSelectDoorImage(image.id)}>
         <View style={styles.item}>
             <Image source={{ uri: image }} style={styles.image} resizeMode="contain" />
         </View>
     </TouchableOpacity>
 );
 
-const HomeScreen = () => {
-    const renderItem = ({ item }) => <Item image={item.image} />;
+const GalleryScreen = ({ navigation, route }) => {
+    const { onSelectDoorImage } = route.params;
+
+    const renderItem = ({ item }) => <Item image={item.image} onSelectDoorImage={onSelectDoorImage} />;
 
     return (
         <View style={styles.container}>
@@ -57,4 +59,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HomeScreen;
+export default GalleryScreen;

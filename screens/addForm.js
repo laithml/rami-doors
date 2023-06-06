@@ -4,7 +4,7 @@ import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
 
-const FormScreen = () => {
+const FormScreen = (navigation) => {
     const [name, setName] = React.useState('');
     const [phone, setPhone] = React.useState('');
     const [city, setCity] = React.useState('');
@@ -14,8 +14,9 @@ const FormScreen = () => {
     const [houseNo, setHouseNo] = React.useState('');
     const [numRooms, setNumRooms] = React.useState('');
 
-    const handleSubmit = () => {
-        // Handle form submission here
+
+    const handleSubmit = ({navigation}) => {
+    navigation.navigate('Rooms') ;
     };
 
     return (
@@ -101,7 +102,7 @@ const FormScreen = () => {
                 keyboardType="numeric"
             />
 
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <TouchableOpacity style={styles.button} onPress={() => handleSubmit(navigation)}>
                 <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>
         </ScrollView>
