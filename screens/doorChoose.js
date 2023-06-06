@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
 
@@ -10,15 +11,18 @@ const data = [
     { id: '6', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysxOhsimPRxuFU2WaY8jnTooe2SAaq6ptMvfCmrQmxZ1bsx7VDnmfWWsHm1wuyKcH46M&usqp=CAU' },
 ];
 
-const GalleryScreen = ({navigation}) => {
+const DoorChoose = ({navigation}) => {
     const renderItem = ({ item }) => (
         <View style={styles.item}>
-            <TouchableOpacity style={styles.touchable}>
+            <TouchableOpacity style={styles.touchable} onPress={() => ChooseDoorFunc(item)}>
                 <Image source={{ uri: item.image }} style={styles.image} resizeMode="contain" />
             </TouchableOpacity>
         </View>
     );
 
+    const ChooseDoorFunc = (item) => {
+        navigation.navigate("RoomInfo", {id:item.id});
+    }
     return (
         <View style={styles.container}>
             <FlatList
@@ -31,6 +35,7 @@ const GalleryScreen = ({navigation}) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -54,4 +59,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default GalleryScreen;
+export default DoorChoose;
+

@@ -24,10 +24,11 @@ const BottomTabNavigator = () => {
 
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
+                tabBarStyle: {
+                    display: 'flex', // Add the desired styles to the tab bar
+                },
+                tabBarShowLabel: false, // Hide the label of the tabs
             })}
-            tabBarOptions={{
-                showLabel: false, // Hide the label of the tabs
-            }}
         >
             <Tab.Screen name="Form" component={FormScreen} />
             <Tab.Screen name="Gallery" component={GalleryScreen} />

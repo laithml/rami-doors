@@ -3,23 +3,28 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
-
+import { useRoute } from '@react-navigation/native';
 
 const RoomInfo = ({ navigation }) => {
     const [roomName, setRoomName] = React.useState('');
     const [color, setColor] = React.useState('');
     const [notes, setNotes] = React.useState('');
     const [measurement, setMeasurement] = React.useState('60');
-    const [selectedDoorImageId, setSelectedDoorImageId] = React.useState(null);
+    const route = useRoute();
+    const id = route.params?.id;
+
+    React.useEffect(() => {
+        if (id) {
+            setNotes(`ID: ${id}`);
+        }
+    }, [id]);
 
     const handleMeasurementChange = (value) => {
         setMeasurement(value);
     };
 
     const handleChooseDoorImage = () => {
-        navigation.navigate('Gallery', {
-            onSelectDoorImage: (imageId) => setSelectedDoorImageId(imageId),
-        });
+        navigation.navigate('DoorChoose');
     };
 
     const handleSubmit = () => {
@@ -56,9 +61,7 @@ const RoomInfo = ({ navigation }) => {
             />
 
             <Text style={styles.label}>Door</Text>
-            {selectedDoorImageId && (
-                <Text style={styles.selectedImageId}>Selected Image ID: {selectedDoorImageId}</Text>
-            )}
+
             <TouchableOpacity style={styles.button} onPress={handleChooseDoorImage}>
                 <Text style={styles.buttonText}>Choose Door Image</Text>
             </TouchableOpacity>
@@ -91,7 +94,6 @@ const RoomInfo = ({ navigation }) => {
         </ScrollView>
     );
 };
-
 const styles = {
     container: {
         flexGrow: 1,
