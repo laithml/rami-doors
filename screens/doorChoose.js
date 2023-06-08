@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 const data = [
     { id: '1', image: 'https://vudesta.lt/wp-content/uploads/2022/10/skan-lauk-dur-1.jpg' },
@@ -11,18 +11,23 @@ const data = [
     { id: '6', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysxOhsimPRxuFU2WaY8jnTooe2SAaq6ptMvfCmrQmxZ1bsx7VDnmfWWsHm1wuyKcH46M&usqp=CAU' },
 ];
 
-const DoorChoose = ({navigation}) => {
+const DoorChoose = () => {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { roomId, updateRoomNames, roomName } = route.params || {};
+
+    const handleChooseDoor = (item) => {
+        navigation.goBack({ screen: 'RoomInfo', params: { roomId, updateRoomNames, roomName, id: item.id } });
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.item}>
-            <TouchableOpacity style={styles.touchable} onPress={() => ChooseDoorFunc(item)}>
+            <TouchableOpacity style={styles.touchable} onPress={() => handleChooseDoor(item)}>
                 <Image source={{ uri: item.image }} style={styles.image} resizeMode="contain" />
             </TouchableOpacity>
         </View>
     );
 
-    const ChooseDoorFunc = (item) => {
-        navigation.navigate("RoomInfo", {id:item.id});
-    }
     return (
         <View style={styles.container}>
             <FlatList
@@ -35,7 +40,6 @@ const DoorChoose = ({navigation}) => {
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -60,4 +64,3 @@ const styles = StyleSheet.create({
 });
 
 export default DoorChoose;
-

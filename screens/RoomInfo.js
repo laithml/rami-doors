@@ -3,21 +3,19 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
-const RoomInfo = ({ navigation }) => {
+const RoomInfo = () => {
     const [roomName, setRoomName] = React.useState('');
     const [color, setColor] = React.useState('');
     const [notes, setNotes] = React.useState('');
     const [measurement, setMeasurement] = React.useState('60');
     const route = useRoute();
-    const id = route.params?.id;
+    const navigation = useNavigation();
+    const {roomId, updateRoomNames } = route.params || {};
+    const { id } = route.params || {};
 
-    React.useEffect(() => {
-        if (id) {
-            setNotes(`ID: ${id}`);
-        }
-    }, [id]);
+
 
     const handleMeasurementChange = (value) => {
         setMeasurement(value);
@@ -27,9 +25,23 @@ const RoomInfo = ({ navigation }) => {
         navigation.navigate('DoorChoose');
     };
 
+
+
+    React.useEffect(() => {
+        if (id) {
+            console.log(id)
+        }
+    }, [id]);
+
     const handleSubmit = () => {
-        navigation.navigate('Rooms');
+        if (updateRoomNames) {
+            updateRoomNames(roomId - 1, roomName);
+        }
+        navigation.goBack();
     };
+
+
+
 
     const renderMeasurementButtons = () => {
         const buttons = [];

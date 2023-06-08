@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, ScrollView, Alert} from 'react-native';
 import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
 
-const FormScreen = (navigation) => {
+const FormScreen = ({ navigation }) => {
     const [name, setName] = React.useState('');
     const [phone, setPhone] = React.useState('');
     const [city, setCity] = React.useState('');
@@ -14,14 +14,16 @@ const FormScreen = (navigation) => {
     const [houseNo, setHouseNo] = React.useState('');
     const [numRooms, setNumRooms] = React.useState('');
 
+    const handleSubmit = () => {
+        if (numRooms.trim() === '') {
+            Alert.alert('Error', 'Please enter the number of rooms');
+            return;
+        }
 
-    const handleSubmit = ({navigation}) => {
-    navigation.navigate('Rooms') ;
+        navigation.navigate('Rooms', { numRooms: parseInt(numRooms, 10) });
     };
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
-
             <Text style={styles.label}>Name</Text>
             <TextInput
                 style={styles.input}
@@ -102,7 +104,7 @@ const FormScreen = (navigation) => {
                 keyboardType="numeric"
             />
 
-            <TouchableOpacity style={styles.button} onPress={() => handleSubmit(navigation)}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>
         </ScrollView>
@@ -148,7 +150,7 @@ const styles = {
         backgroundColor: Colors.primary,
         paddingVertical: Spacing * 2,
         paddingHorizontal: Spacing * 2,
-        marginTop: Spacing*5 ,
+        marginTop: Spacing * 5,
         alignItems: 'center',
         borderRadius: 4,
     },
