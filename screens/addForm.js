@@ -3,6 +3,9 @@ import {View, Text, TextInput, TouchableOpacity, ScrollView, Alert} from 'react-
 import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
+import {db} from '../config/firebase';
+const {doc, setDoc, deleteDoc, getDoc, updateDoc, collection, getDocs} = require("firebase/firestore");
+
 
 const FormScreen = ({ navigation }) => {
     const [name, setName] = React.useState('');
@@ -12,15 +15,38 @@ const FormScreen = ({ navigation }) => {
     const [apartmentNo, setApartmentNo] = React.useState('');
     const [floorNo, setFloorNo] = React.useState('');
     const [houseNo, setHouseNo] = React.useState('');
-    const [numRooms, setNumRooms] = React.useState('');
 
     const handleSubmit = () => {
-        if (numRooms.trim() === '') {
-            Alert.alert('Error', 'Please enter the number of rooms');
-            return;
-        }
+        //TODO: CHECK ALL INPUTS
+        const rooms=[];
+        const  clientID = "4hgsni1tfupv8wtlv7b4ce";
 
-        navigation.navigate('Rooms', { numRooms: parseInt(numRooms, 10) });
+        const data = {
+            clientID,
+            name,
+            phone,
+            city,
+            street,
+            apartmentNo,
+            floorNo,
+            houseNo,
+            rooms,
+        };
+
+// if (!name || !phone || !city || !street || !apartmentNo || !floorNo || !houseNo) {
+//             Alert.alert('Missing Fields', 'Please fill in all fields');
+//             return;
+//
+//         }else{
+            const clientsRef=doc(db, "clients", clientID);
+            setDoc(clientsRef, data).then(() => {
+            Alert.alert('Success', 'Your order has been placed successfully');
+            });
+//
+//         }
+        console.log(data);
+
+        navigation.navigate('Rooms',{clientID});
     };
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -94,15 +120,6 @@ const FormScreen = ({ navigation }) => {
                     />
                 </View>
             </View>
-
-            <Text style={styles.label}>Number of Rooms</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter Number of Rooms"
-                value={numRooms}
-                onChangeText={setNumRooms}
-                keyboardType="numeric"
-            />
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Next</Text>

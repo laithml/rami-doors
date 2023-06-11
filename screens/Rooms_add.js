@@ -1,58 +1,82 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import Colors from '../constants/Colors';
 import { FontAwesome } from '@expo/vector-icons';
-import { useRoute } from '@react-navigation/native';
+import { db } from '../config/firebase';
+import {doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore';
 
-const Rooms_add = ({ navigation, route }) => {
-    const [roomName, setRoomName] = useState([]);
-    const numRooms = route.params?.numRooms;
+const RoomsAdd = ({ route, navigation }) => {
+    const [rooms, setRooms] = useState([]);
+
+    const fetchRoomsFromDatabase = async () => {
+        const clientsRef = doc(db, 'clients', route.params?.clientID);
+        const docSnap = await getDoc(clientsRef);
+        if (docSnap.exists()) {
+            return docSnap.data().rooms;
+        }
+    };
+
+    const refreshRooms = async () => {
+        try {
+            const roomsData = await fetchRoomsFromDatabase();
+            setRooms(roomsData);
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+        }
+    };
 
     useEffect(() => {
-        const initialRoomNames = Array(numRooms).fill('');
-        setRoomName(initialRoomNames);
-    }, [numRooms]);
+        const unsubscribe = navigation.addListener('focus', () => {
+            refreshRooms();
+        });
 
-    const updateRoomNames = (index, name) => {
-        const updatedRoomNames = [...roomName];
-        updatedRoomNames[index] = name;
-        setRoomName(updatedRoomNames);
-    };
+        return unsubscribe;
+    }, [navigation]);
 
-    const renderRooms = () => {
-        const rows = Math.ceil(numRooms / 3); // Number of rows based on numRooms
-        const rooms = [];
+    console.log('rooms', rooms);
 
-        for (let row = 0; row < rows; row++) {
-            const columns = [];
-            for (let col = 0; col < 3; col++) {
-                const index = row * 3 + col;
-                if (index < numRooms) {
-                    const name = roomName[index] ? roomName[index] : `Room ${index + 1}`;
-                    columns.push(
-                        <TouchableOpacity
-                            key={index}
-                            style={styles.squareContainer}
-                            onPress={() => navigation.navigate('RoomInfo', {roomId: index + 1, updateRoomNames })}
-                        >
-                            <FontAwesome name="plus" size={80} color="black" />
-                            <Text style={styles.title}>{name}</Text>
-                        </TouchableOpacity>
-                    );
-                } else {
-                    columns.push(<View key={col} style={styles.squareContainer} />);
-                }
-            }
-            rooms.push(<View key={row} style={styles.rowContainer}>{columns}</View>);
+    const handleDeleteRoom = async (roomID) => {
+        try {
+            const clientsRef = doc(db, 'clients', route.params?.clientID);
+            //delete room from client room array
+            await updateDoc(clientsRef, {
+                rooms: rooms.filter((room) => room.roomID !== roomID),
+            });
+            refreshRooms();
+        } catch (error) {
+            console.error('Error deleting room:', error);
         }
-
-        return rooms;
     };
+
+    function handleRoomPress(roomName) {
+        console.log('Room name:', roomName);
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            {renderRooms()}
+            {rooms.map((room) => (
+                <TouchableOpacity
+                    style={styles.roomContainer}
+                    key={room.id}
+                    onPress={() => handleRoomPress(room.roomName)}
+                >
+                    <Text style={styles.roomName}>{room.roomName}</Text>
+                    <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={() => handleDeleteRoom(room.roomID)}
+                    >
+                        <FontAwesome name="trash-o" size={20} color="red" />
+                    </TouchableOpacity>
+                </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+                style={styles.addRoomContainer}
+                onPress={() => navigation.navigate('RoomInfo', { clientID: route.params?.clientID })}
+            >
+                <FontAwesome name="plus" size={80} color="black" />
+                <Text style={styles.addRoomText}>Add Room</Text>
+            </TouchableOpacity>
         </ScrollView>
     );
 };
@@ -63,22 +87,33 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.background,
         padding: 16,
     },
-    rowContainer: {
+    roomContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: 80,
         marginBottom: 10,
+        borderWidth: 1,
+        borderColor: Colors.primary,
+        borderRadius: 10,
+        padding: 10,
     },
-    squareContainer: {
+    roomName: {
         flex: 1,
-        margin: 10,
-        aspectRatio: 1,
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    deleteButton: {
+        marginLeft: 10,
+    },
+    addRoomContainer: {
+        alignItems: 'center',
+        marginTop: 10,
         borderWidth: 2,
         borderColor: Colors.primary,
         borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
+        padding: 10,
     },
-    title: {
+    addRoomText: {
         marginTop: 8,
         fontSize: 18,
         fontWeight: 'bold',
@@ -86,4 +121,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Rooms_add;
+export default RoomsAdd;

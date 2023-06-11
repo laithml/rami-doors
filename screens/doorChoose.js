@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const data = [
     { id: '1', image: 'https://vudesta.lt/wp-content/uploads/2022/10/skan-lauk-dur-1.jpg' },
@@ -11,13 +11,11 @@ const data = [
     { id: '6', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysxOhsimPRxuFU2WaY8jnTooe2SAaq6ptMvfCmrQmxZ1bsx7VDnmfWWsHm1wuyKcH46M&usqp=CAU' },
 ];
 
-const DoorChoose = () => {
+const DoorChoose = ({route}) => {
     const navigation = useNavigation();
-    const route = useRoute();
-    const { roomId, updateRoomNames, roomName } = route.params || {};
 
     const handleChooseDoor = (item) => {
-        navigation.goBack({ screen: 'RoomInfo', params: { roomId, updateRoomNames, roomName, id: item.id } });
+        navigation.navigate('RoomInfo', {clientID:route.params.clientID ,doorID: item.id, image: item.image });
     };
 
     const renderItem = ({ item }) => (

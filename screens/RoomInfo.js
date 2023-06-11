@@ -1,46 +1,53 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import React, {useEffect} from 'react';
+import { View, Image,Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import {db} from "../config/firebase";
+import {doc, setDoc, deleteDoc, getDoc, updateDoc, collection, getDocs} from "firebase/firestore";
 
-const RoomInfo = () => {
+const RoomInfo = ({route,navigation}) => {
     const [roomName, setRoomName] = React.useState('');
     const [color, setColor] = React.useState('');
     const [notes, setNotes] = React.useState('');
     const [measurement, setMeasurement] = React.useState('60');
-    const route = useRoute();
-    const navigation = useNavigation();
-    const {roomId, updateRoomNames } = route.params || {};
-    const { id } = route.params || {};
-
-
-
+    const doorID  = route.params?.doorID;
+    const image = route.params?.image;
+    const clientID = route.params?.clientID;
     const handleMeasurementChange = (value) => {
         setMeasurement(value);
     };
 
     const handleChooseDoorImage = () => {
-        navigation.navigate('DoorChoose');
+        navigation.navigate('DoorChoose',{clientID: route.params?.clientID,image:route.image?.image,doorID: route.params?.doorID});
     };
-
-
-
-    React.useEffect(() => {
-        if (id) {
-            console.log(id)
-        }
-    }, [id]);
 
     const handleSubmit = () => {
-        if (updateRoomNames) {
-            updateRoomNames(roomId - 1, roomName);
+        const roomID = Math.random().toString(36).substring(7);
+        const data = {
+            roomID,
+            roomName,
+            color,
+            notes,
+            measurement,
+            doorID,
         }
-        navigation.goBack();
+
+        const clientsRef=doc(db, "clients", clientID);
+        getDoc(clientsRef).then((docSnap) => {
+           //update the rooms array
+            const rooms = docSnap.data().rooms;
+            rooms.push(data);
+            updateDoc(clientsRef, {rooms}).then(() => {
+                console.log("Document successfully updated!");
+                navigation.navigate('Rooms',{clientID});
+
+            });
+        });
+
+
     };
-
-
 
 
     const renderMeasurementButtons = () => {
@@ -73,6 +80,10 @@ const RoomInfo = () => {
             />
 
             <Text style={styles.label}>Door</Text>
+            <Text style={styles.label} >Door id: {doorID}</Text>
+
+            <Image source={{uri: image}} style={styles.image}  />
+
 
             <TouchableOpacity style={styles.button} onPress={handleChooseDoorImage}>
                 <Text style={styles.buttonText}>Choose Door Image</Text>
@@ -101,7 +112,7 @@ const RoomInfo = () => {
             />
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Next</Text>
+                <Text style={styles.buttonText}>ADD</Text>
             </TouchableOpacity>
         </ScrollView>
     );
@@ -168,7 +179,8 @@ const styles = {
         backgroundColor: Colors.primary,
         paddingVertical: Spacing * 2,
         paddingHorizontal: Spacing * 2,
-        marginTop: Spacing * 5,
+        marginTop: Spacing * 2,
+        marginBottom: Spacing * 2,
         alignItems: 'center',
         borderRadius: 4,
     },
@@ -177,6 +189,12 @@ const styles = {
         fontSize: FontSize.medium,
         fontWeight: 'bold',
     },
+    image: {
+        aspectRatio: 0.5,
+        width: 800,
+        height: 320,
+
+    }
 };
 
 export default RoomInfo;
