@@ -1,16 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
+import { db } from "../config/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
-const data = [
-    { id: '1', image: 'https://vudesta.lt/wp-content/uploads/2022/10/skan-lauk-dur-1.jpg' },
-    { id: '2', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzqe9j7QspzMcKWFryGgRqJlxF2Lpb4W1w-kS3VzqATy1FG6WNsmmI1q-zPzrplC2d750&usqp=CAU' },
-    { id: '3', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysxOhsimPRxuFU2WaY8jnTooe2SAaq6ptMvfCmrQmxZ1bsx7VDnmfWWsHm1wuyKcH46M&usqp=CAU' },
-    { id: '4', image: 'https://vudesta.lt/wp-content/uploads/2022/10/skan-lauk-dur-1.jpg' },
-    { id: '5', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzqe9j7QspzMcKWFryGgRqJlxF2Lpb4W1w-kS3VzqATy1FG6WNsmmI1q-zPzrplC2d750&usqp=CAU' },
-    { id: '6', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysxOhsimPRxuFU2WaY8jnTooe2SAaq6ptMvfCmrQmxZ1bsx7VDnmfWWsHm1wuyKcH46M&usqp=CAU' },
-];
+const GalleryScreen = ({ navigation }) => {
+    const [doorData, setDoorData] = useState([]);
 
-const GalleryScreen = ({navigation}) => {
+    useEffect(() => {
+        // Fetch door data from Firebase
+        const fetchDoorData = async () => {
+            try {
+                const doorsCollection = collection(db, 'doors');
+                const doorsSnapshot = await getDocs(doorsCollection);
+
+                const doors = doorsSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    image: convertDriveImageUrl(doc.data().imageUrl),
+                }));
+
+                setDoorData(doors);
+            } catch (error) {
+                console.log('Error fetching door data:', error);
+            }
+        };
+
+        fetchDoorData();
+    }, []);
+
+    // Modify Google Drive image URL
+    const convertDriveImageUrl = (driveUrl) => {
+        const fileId = driveUrl.match(/\/file\/d\/([^/]+)\//)[1];
+        return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <TouchableOpacity style={styles.touchable}>
@@ -22,7 +44,7 @@ const GalleryScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <FlatList
-                data={data}
+                data={doorData}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.flatListContent}
@@ -43,7 +65,7 @@ const styles = StyleSheet.create({
     item: {
         flex: 1,
         aspectRatio: 1, // Maintain a square aspect ratio
-        margin: '1.8%',
+
     },
     image: {
         width: '100%',
