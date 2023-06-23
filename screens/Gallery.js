@@ -6,32 +6,40 @@ import { collection, getDocs } from "firebase/firestore";
 const GalleryScreen = ({ navigation }) => {
     const [doorData, setDoorData] = useState([]);
 
-    useEffect(() => {
-        // Fetch door data from Firebase
-        const fetchDoorData = async () => {
-            try {
-                const doorsCollection = collection(db, 'doors');
-                const doorsSnapshot = await getDocs(doorsCollection);
+    // Modify Google Drive image URL
+    const convertDriveImageUrl = (driveUrl) => {
+        if (!driveUrl) {
+            return 'fallback_image_url'; // Replace with your desired fallback image URL
+        }
 
-                const doors = doorsSnapshot.docs.map((doc) => ({
+        const fileIdMatch = driveUrl.match(/\/file\/d\/([^/]+)\//);
+        if (fileIdMatch && fileIdMatch[1]) {
+            const fileId = fileIdMatch[1];
+            return `https://drive.google.com/uc?export=view&id=${fileId}`;
+        } else {
+            return 'fallback_image_url'; // Replace with your desired fallback image URL
+        }
+    };
+
+    useEffect(() => {
+        const fetchDoorData = async () => {
+            const doorsRef = collection(db, "doors");
+            const doorSnapshot = await getDocs(doorsRef);
+            const doors = [];
+
+            doorSnapshot.forEach((doc) => {
+                const door = {
                     id: doc.id,
                     image: convertDriveImageUrl(doc.data().imageUrl),
-                }));
+                };
+                doors.push(door);
+            });
 
-                setDoorData(doors);
-            } catch (error) {
-                console.log('Error fetching door data:', error);
-            }
+            setDoorData(doors);
         };
 
         fetchDoorData();
     }, []);
-
-    // Modify Google Drive image URL
-    const convertDriveImageUrl = (driveUrl) => {
-        const fileId = driveUrl.match(/\/file\/d\/([^/]+)\//)[1];
-        return `https://drive.google.com/uc?export=view&id=${fileId}`;
-    };
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
@@ -65,7 +73,6 @@ const styles = StyleSheet.create({
     item: {
         flex: 1,
         aspectRatio: 1, // Maintain a square aspect ratio
-
     },
     image: {
         width: '100%',
