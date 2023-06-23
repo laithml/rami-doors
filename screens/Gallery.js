@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
-import { db } from "../config/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View, FlatList, Image, TouchableOpacity} from 'react-native';
+import {db} from "../config/firebase";
+import {collection, getDocs} from "firebase/firestore";
 
-const GalleryScreen = ({ navigation }) => {
+const GalleryScreen = ({navigation}) => {
     const [doorData, setDoorData] = useState([]);
 
     // Modify Google Drive image URL
@@ -41,10 +41,10 @@ const GalleryScreen = ({ navigation }) => {
         fetchDoorData();
     }, []);
 
-    const renderItem = ({ item }) => (
+    const renderItem = ({item}) => (
         <View style={styles.item}>
             <TouchableOpacity style={styles.touchable}>
-                <Image source={{ uri: item.image }} style={styles.image} resizeMode="contain" />
+                <Image source={{uri: item.image}} style={styles.image} resizeMode="contain"/>
             </TouchableOpacity>
         </View>
     );

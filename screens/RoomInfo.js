@@ -1,18 +1,18 @@
 import React, {useEffect} from 'react';
-import { View, Image,Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import {View, Image, Text, TextInput, TouchableOpacity, ScrollView} from 'react-native';
 import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import {db} from "../config/firebase";
 import {doc, setDoc, deleteDoc, getDoc, updateDoc, collection, getDocs} from "firebase/firestore";
 
-const RoomInfo = ({route,navigation}) => {
+const RoomInfo = ({route, navigation}) => {
     const [roomName, setRoomName] = React.useState('');
     const [color, setColor] = React.useState('');
     const [notes, setNotes] = React.useState('');
     const [measurement, setMeasurement] = React.useState('60');
-    const doorID  = route.params?.doorID;
+    const doorID = route.params?.doorID;
     const image = route.params?.image;
     const clientID = route.params?.clientID;
     const handleMeasurementChange = (value) => {
@@ -20,7 +20,11 @@ const RoomInfo = ({route,navigation}) => {
     };
 
     const handleChooseDoorImage = () => {
-        navigation.navigate('DoorChoose',{clientID: route.params?.clientID,image:route.image?.image,doorID: route.params?.doorID});
+        navigation.navigate('DoorChoose', {
+            clientID: route.params?.clientID,
+            image: route.image?.image,
+            doorID: route.params?.doorID
+        });
     };
 
     const handleSubmit = () => {
@@ -34,14 +38,14 @@ const RoomInfo = ({route,navigation}) => {
             doorID,
         }
 
-        const clientsRef=doc(db, "clients", clientID);
+        const clientsRef = doc(db, "clients", clientID);
         getDoc(clientsRef).then((docSnap) => {
-           //update the rooms array
+            //update the rooms array
             const rooms = docSnap.data().rooms;
             rooms.push(data);
             updateDoc(clientsRef, {rooms}).then(() => {
                 console.log("Document successfully updated!");
-                navigation.navigate('Rooms',{clientID});
+                navigation.navigate('Rooms', {clientID});
 
             });
         });
@@ -80,9 +84,9 @@ const RoomInfo = ({route,navigation}) => {
             />
 
             <Text style={styles.label}>Door</Text>
-            <Text style={styles.label} >Door id: {doorID}</Text>
+            <Text style={styles.label}>Door id: {doorID}</Text>
 
-            <Image source={{uri: image}} style={styles.image}  />
+            <Image source={{uri: image}} style={styles.image}/>
 
 
             <TouchableOpacity style={styles.button} onPress={handleChooseDoorImage}>

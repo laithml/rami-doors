@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
+import {Text} from 'react-native-paper';
 import Colors from '../constants/Colors';
-import { FontAwesome } from '@expo/vector-icons';
-import { db } from '../config/firebase';
+import {FontAwesome} from '@expo/vector-icons';
+import {db} from '../config/firebase';
 import {doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore';
 
-const RoomsAdd = ({ route, navigation }) => {
+const RoomsAdd = ({route, navigation}) => {
     const [rooms, setRooms] = useState([]);
 
     const fetchRoomsFromDatabase = async () => {
@@ -66,15 +66,15 @@ const RoomsAdd = ({ route, navigation }) => {
                         style={styles.deleteButton}
                         onPress={() => handleDeleteRoom(room.roomID)}
                     >
-                        <FontAwesome name="trash-o" size={20} color="red" />
+                        <FontAwesome name="trash-o" size={20} color="red"/>
                     </TouchableOpacity>
                 </TouchableOpacity>
             ))}
             <TouchableOpacity
                 style={styles.addRoomContainer}
-                onPress={() => navigation.navigate('RoomInfo', { clientID: route.params?.clientID })}
+                onPress={() => navigation.navigate('RoomInfo', {clientID: route.params?.clientID})}
             >
-                <FontAwesome name="plus" size={80} color="black" />
+                <FontAwesome name="plus" size={80} color="black"/>
                 <Text style={styles.addRoomText}>Add Room</Text>
             </TouchableOpacity>
         </ScrollView>

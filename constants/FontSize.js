@@ -5,9 +5,9 @@ const xLarge = 30;
 const xxLarge = 35;
 
 export default {
-  small,
-  medium,
-  large,
-  xLarge,
-  xxLarge,
+    small,
+    medium,
+    large,
+    xLarge,
+    xxLarge,
 };

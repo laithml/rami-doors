@@ -4,10 +4,11 @@ import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
 import {db} from '../config/firebase';
+
 const {doc, setDoc, deleteDoc, getDoc, updateDoc, collection, getDocs} = require("firebase/firestore");
 
 
-const FormScreen = ({ navigation }) => {
+const FormScreen = ({navigation}) => {
     const [name, setName] = React.useState('');
     const [phone, setPhone] = React.useState('');
     const [city, setCity] = React.useState('');
@@ -18,8 +19,8 @@ const FormScreen = ({ navigation }) => {
 
     const handleSubmit = () => {
         //TODO: CHECK ALL INPUTS
-        const rooms=[];
-        const  clientID = "4hgsni1tfupv8wtlv7b4ce";
+        const rooms = [];
+        const clientID = Math.random().toString(36).substring(7);
 
         const data = {
             clientID,
@@ -38,15 +39,15 @@ const FormScreen = ({ navigation }) => {
 //             return;
 //
 //         }else{
-            const clientsRef=doc(db, "clients", clientID);
-            setDoc(clientsRef, data).then(() => {
+        const clientsRef = doc(db, "clients", clientID);
+        setDoc(clientsRef, data).then(() => {
             Alert.alert('Success', 'Your order has been placed successfully');
-            });
+        });
 //
 //         }
         console.log(data);
 
-        navigation.navigate('Rooms',{clientID});
+        navigation.navigate('Rooms', {clientID});
     };
     return (
         <ScrollView contentContainerStyle={styles.container}>
