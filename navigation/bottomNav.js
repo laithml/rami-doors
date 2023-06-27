@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Ionicons} from '@expo/vector-icons';
 import FormScreen from '../screens/addForm';
 import GalleryScreen from '../screens/Gallery';
+import TicketsScreen from "../screens/TicketsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -15,11 +16,11 @@ const BottomTabNavigator = () => {
                     let iconName;
 
                     if (route.name === 'Form') {
-                        iconName = 'document-outline';
+                        iconName = 'add-circle-outline';
                     } else if (route.name === 'Gallery') {
                         iconName = 'home-outline';
-                    } else if (route.name === 'Admin') {
-                        iconName = 'person-outline';
+                    } else if (route.name === 'Tickets') {
+                        iconName = 'list-outline';
                     }
 
                     return <Ionicons name={iconName} size={size} color={color}/>;
@@ -32,6 +33,7 @@ const BottomTabNavigator = () => {
         >
             <Tab.Screen name="Form" component={FormScreen}/>
             <Tab.Screen name="Gallery" component={GalleryScreen}/>
+            <Tab.Screen name="Tickets" component={TicketsScreen}/>
         </Tab.Navigator>
     );
 };

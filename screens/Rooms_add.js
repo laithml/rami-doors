@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
-import {Text} from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { Text } from 'react-native-paper';
 import Colors from '../constants/Colors';
-import {FontAwesome} from '@expo/vector-icons';
-import {db} from '../config/firebase';
-import {doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore';
+import { FontAwesome } from '@expo/vector-icons';
+import { db } from '../config/firebase';
+import { doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 
-const RoomsAdd = ({route, navigation}) => {
+const RoomsAdd = ({ route, navigation }) => {
     const [rooms, setRooms] = useState([]);
 
     const fetchRoomsFromDatabase = async () => {
@@ -53,31 +53,54 @@ const RoomsAdd = ({route, navigation}) => {
         console.log('Room name:', roomName);
     }
 
+    const handleDoneButton = () => {
+        Alert.alert(
+            'Success',
+            'Customer added successfully',
+            [
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        navigation.navigate('Gallery');
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {rooms.map((room) => (
-                <TouchableOpacity
-                    style={styles.roomContainer}
-                    key={room.id}
-                    onPress={() => handleRoomPress(room.roomName)}
-                >
-                    <Text style={styles.roomName}>{room.roomName}</Text>
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.contentContainer}>
+                {rooms.map((room) => (
                     <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => handleDeleteRoom(room.roomID)}
+                        style={styles.roomContainer}
+                        key={room.id}
+                        onPress={() => handleRoomPress(room.roomName)}
                     >
-                        <FontAwesome name="trash-o" size={20} color="red"/>
+                        <Text style={styles.roomName}>{room.roomName}</Text>
+                        <TouchableOpacity
+                            style={styles.deleteButton}
+                            onPress={() => handleDeleteRoom(room.roomID)}
+                        >
+                            <FontAwesome name="trash-o" size={20} color="red" />
+                        </TouchableOpacity>
                     </TouchableOpacity>
+                ))}
+                <TouchableOpacity
+                    style={styles.addRoomContainer}
+                    onPress={() =>
+                        navigation.navigate('RoomInfo', { clientID: route.params?.clientID })
+                    }
+                >
+                    <FontAwesome name="plus" size={80} color="black" />
+                    <Text style={styles.addRoomText}>Add Room</Text>
                 </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-                style={styles.addRoomContainer}
-                onPress={() => navigation.navigate('RoomInfo', {clientID: route.params?.clientID})}
-            >
-                <FontAwesome name="plus" size={80} color="black"/>
-                <Text style={styles.addRoomText}>Add Room</Text>
+            </ScrollView>
+            <TouchableOpacity style={styles.doneButton} onPress={handleDoneButton}>
+                <Text style={styles.doneButtonText}>Done</Text>
             </TouchableOpacity>
-        </ScrollView>
+        </View>
     );
 };
 
@@ -85,6 +108,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background,
+    },
+    contentContainer: {
+        flexGrow: 1,
         padding: 16,
     },
     roomContainer: {
@@ -118,6 +144,20 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    doneButton: {
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 20,
+
+    },
+    doneButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
 

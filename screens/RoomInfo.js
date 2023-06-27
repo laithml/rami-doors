@@ -12,11 +12,14 @@ const RoomInfo = ({route, navigation}) => {
     const [color, setColor] = React.useState('');
     const [notes, setNotes] = React.useState('');
     const [measurement, setMeasurement] = React.useState('60');
+    const [width, setWidth] = React.useState('10');
     const doorID = route.params?.doorID;
     const image = route.params?.image;
     const clientID = route.params?.clientID;
     const handleMeasurementChange = (value) => {
         setMeasurement(value);
+    }; const handleWidthChange = (value) => {
+        setWidth(value);
     };
 
     const handleChooseDoorImage = () => {
@@ -72,6 +75,24 @@ const RoomInfo = ({route, navigation}) => {
         }
         return buttons;
     };
+    const renderWidth = () => {
+        const buttons = [];
+        for (let i = 10; i <= 20; i += 2) {
+            buttons.push(
+                <TouchableOpacity
+                    key={i}
+                    style={[
+                        styles.measurementButton,
+                        measurement === i.toString() ? styles.measurementButtonSelected : null,
+                    ]}
+                    onPress={() => setWidth(i.toString())}
+                >
+                    <Text style={styles.measurementButtonText}>{i}</Text>
+                </TouchableOpacity>
+            );
+        }
+        return buttons;
+    };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -103,7 +124,8 @@ const RoomInfo = ({route, navigation}) => {
 
             <Text style={styles.label}>Measurement</Text>
             <View style={styles.measurementContainer}>{renderMeasurementButtons()}</View>
-
+            <Text style={styles.label}>Width</Text>
+            <View style={styles.measurementContainer}>{renderWidth()}</View>
             <Text style={styles.label}>Note</Text>
             <TextInput
                 style={styles.note}

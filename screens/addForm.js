@@ -34,17 +34,19 @@ const FormScreen = ({navigation}) => {
             rooms,
         };
 
-// if (!name || !phone || !city || !street || !apartmentNo || !floorNo || !houseNo) {
-//             Alert.alert('Missing Fields', 'Please fill in all fields');
-//             return;
-//
-//         }else{
+if (!name || !phone || !city || !street || !apartmentNo || !floorNo || !houseNo) {
+            Alert.alert('Missing Fields', 'Please fill in all fields');
+            return;
+
+        }else{
+        // noinspection JSCheckFunctionSignatures
+        setDoc(doc(db, "activeClients", clientID), data).then(r=>console.log(r));
         const clientsRef = doc(db, "clients", clientID);
         setDoc(clientsRef, data).then(() => {
             Alert.alert('Success', 'Your order has been placed successfully');
         });
-//
-//         }
+
+        }
         console.log(data);
 
         navigation.navigate('Rooms', {clientID});
