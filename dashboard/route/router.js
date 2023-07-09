@@ -21,6 +21,11 @@ router.get("/clients", ClientsController.getClients);
 router.delete("/clients/:id", ClientsController.deleteClient);
 
 
+router.get("/active-clients", ClientsController.getActiveClients);
+
+router.get("/clients/:id", ClientsController.getClient);
+
+
 
 
 router.get("*", (req, res) => {

@@ -46,11 +46,11 @@
         <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
-        <!-- Nav Item - Courses  -->
+        <!-- Nav Item - Clients  -->
         <li class="nav-item active">
             <a class="nav-link" href="/">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Courses </span></a>
+                <span>Clients </span></a>
         </li>
 
 
@@ -136,8 +136,6 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Clients  Table</h6>
-                        <button id="createCourseBtn" class="btn btn-success btn-circle"><i class="fas fa-plus-circle"></i></button>
-
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -192,44 +190,6 @@
 
 
 
-<!-- Edit Course Modal -->
-<div class="modal fade" id="editCourseModal" tabindex="-1" role="dialog" aria-labelledby="editCourseModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editCourseModalLabel">Edit Course</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input id="courseId" hidden>
-                <form id="editCourseForm">
-                    <div class="form-group">
-                        <label for="courseName">Course Name</label>
-                        <input type="text" class="form-control" id="courseName" placeholder="Enter course name">
-                    </div>
-                    <div class="form-group">
-                        <label for="courseImage">Course Image URL</label>
-                        <input type="text" class="form-control" id="courseImage" placeholder="Enter course image URL">
-                    </div>
-                    <div class="form-group">
-                        <label for="coursePrice">Course Price</label>
-                        <input type="number" class="form-control" id="coursePrice" placeholder="Enter course price">
-                    </div>
-                    <div class="form-group">
-                        <label for="courseDescription">Course Description</label>
-                        <textarea class="form-control" id="courseDescription" rows="3" placeholder="Enter course description"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Delete Client Modal -->
 <div class="modal fade" id="deleteClientModal" tabindex="-1" role="dialog" aria-labelledby="deleteClientModalLabel" aria-hidden="true">
@@ -290,8 +250,8 @@
 
 <!-- Page level custom scripts -->
 <script src="../public/js/datatables-demo.js"></script>
-<script src="public/js/Clients.js"></script>
-
+<script src="../public/js/clients.js"></script>
+<script src="../public/js/script.js"></script>
 </body>
 
 </html>

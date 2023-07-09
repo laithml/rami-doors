@@ -22,8 +22,7 @@ $(document).ready(() => {
                     .append("<td>" + client.city + "</td>")
                     .append(
                         $("<td>").html(
-                            `<button class="btn btn-success btn-circle list" data-id="${client.clientID}"><i class="fas fa-list"></i></button>
-               <button class="btn btn-secondary btn-circle edit" data-id="${client.clientID}"><i class="fas fa-edit"></i></button>
+                            `<button class="btn btn-success btn-circle print" data-id="${client.clientID}"><i class="fas fa-print"></i></button>
                <button class="btn btn-danger btn-circle delete" data-id="${client.clientID}"><i class="fas fa-minus-circle"></i></button>`
                         )
                     );
@@ -38,30 +37,5 @@ $(document).ready(() => {
 });
 
 
-$(document).on("click", ".delete", function () {
-    let id = $(this).data("id");
-    console.log(id);
-
-
-    //show delete modal
-    $("#deleteClientModal").modal("show");
-
-    $("#confirmDeleteBtn").click(() => {
-
-        //delete client
-        fetch("/clients/" + id, {
-            method: "DELETE",
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.status) {
-                    $("#deleteModal").modal("hide");
-                    $("#Clients").DataTable().row($("#" + id)).remove().draw();
-                }
-            })
-            .catch((error) => console.error(error));
-
-    });
-});
 
 

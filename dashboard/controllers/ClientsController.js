@@ -31,3 +31,39 @@ exports.deleteClient = async (req, res) => {
     }
 
 }
+
+
+exports.getClient= async (req, res) => {
+
+    try {
+        const docRef = doc(db, "clients", req.params.id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            res.json(docSnap.data());
+        } else {
+            res.status(404).json({status: false, message: "Client not found"});
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json
+
+    }
+}
+
+
+exports.getActiveClients = async (req, res) => {
+
+    try {
+        let clients = [];
+        const querySnapshot = await getDocs(collection(db, "activeClients"));
+        querySnapshot.forEach((doc) => {
+            clients.push(doc.data());
+        });
+        res.json(clients);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+
+
+}
