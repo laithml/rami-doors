@@ -22,6 +22,8 @@ exports.deleteClient = async (req, res) => {
     console.log("deleteClient");
     try {
         const docRef = doc(db, "clients", req.params.id);
+        const ActiveDocRef = doc(db, "activeClients", req.params.id);
+        await deleteDoc(ActiveDocRef);
         await deleteDoc(docRef);
         res.json({status: true});
     }
@@ -40,6 +42,7 @@ exports.getClient= async (req, res) => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             res.json(docSnap.data());
+            console.log(docSnap.data());
         } else {
             res.status(404).json({status: false, message: "Client not found"});
         }

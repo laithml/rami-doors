@@ -1,17 +1,15 @@
 $(document).ready(() => {
-
+    let live_table = $("#live-tickets").DataTable({
+        data: [],
+        columns: [
+            {data: "name"},
+            {data: "phone"},
+            {data: "location"},
+            {data: "manage"},
+        ],
+    });
 
     function fetchLive() {
-        let live_table = $("#live-tickets").DataTable({
-            data: [],
-            columns: [
-                {data: "name"},
-                {data: "phone"},
-                {data: "location"},
-                {data: "manage"},
-            ],
-        });
-
         fetch("/active-clients")
             .then((res) => res.json())
             .then((data) => {
@@ -36,8 +34,8 @@ $(document).ready(() => {
 
     }
 
-    setInterval(fetchLive, 300000);
     fetchLive();
+    setInterval(fetchLive, 300000);
 
 
 

@@ -63,7 +63,7 @@ $(document).on("click", ".delete", function () {
             .then((res) => res.json())
             .then((data) => {
                 if (data.status) {
-                    $("#deleteModal").modal("hide");
+                    $("#deleteClientModal").modal("hide");
                     $("#Clients").DataTable().row($("#" + id)).remove().draw();
                 }
             })
@@ -77,6 +77,7 @@ function generateClientHtml(client) {
     let clientHtml = `
     <div class="client-details">
       <h1><i class="fas fa-user"></i> Client: ${client.name}</h1>
+      <h2><i class="fas fa-phone"></i> Phone: ${client.phone}</h2>
       <div class="location-details">
         <div class="row">
           <div class="col">
@@ -109,6 +110,7 @@ function generateClientHtml(client) {
     let roomCounter = 0;
 
     client.rooms.forEach((room) => {
+        console.log(room);
         if (roomCounter % 3 === 0 && roomCounter !== 0) {
             clientHtml += '</div><div class="row">';
         }
@@ -134,8 +136,8 @@ function generateClientHtml(client) {
             </div>
             <div class="field">
               <label for="notes-${room.roomName}"><i class="fas fa-sticky-note"></i> Notes:</label>
-              <span id="notes-${room.roomName}">${room.notes}</span>
             </div>
+            <span id="notes-${room.roomName}">${room.notes}</span>
           </div>
         </div>`;
         roomCounter++;
@@ -150,7 +152,7 @@ function generateClientHtml(client) {
 
 
 function createPrintPage(clientID, content) {
-    let printWindow = window.open("", `_blank${clientID}`, "width=800,height=600");
+    let printWindow = window.open("", `_blank`, "width=800,height=600");
     printWindow.document.open();
     printWindow.document.write(`
     <html>
@@ -180,7 +182,7 @@ function createPrintPage(clientID, content) {
           }
           .location-details .row .col {
   flex: 1;
-  margin-right: 10px; /* Add margin-right to create space between city and street */
+  margin-right: 10px; 
 }
           .col p {
             margin: 0;
@@ -190,7 +192,7 @@ function createPrintPage(clientID, content) {
             padding-top: 20px;
           }
           .client-details .location-details .row .col {
-  flex: 0 0 auto; /* Add this line to prevent the house number from wrapping */
+  flex: 0 0 auto; 
 }
 .room-details {
   border: 1px solid #ccc;
@@ -198,7 +200,7 @@ function createPrintPage(clientID, content) {
   margin-right: 20px;
   margin-bottom: 20px;
   display: flex;
-  flex-direction: column; /* Set flex-direction to column */
+  flex-direction: column;
 }
 
 .field {

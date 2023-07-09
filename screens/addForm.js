@@ -18,7 +18,6 @@ const FormScreen = ({navigation}) => {
     const [houseNo, setHouseNo] = React.useState('');
 
     const handleSubmit = () => {
-        //TODO: CHECK ALL INPUTS
         const rooms = [];
         const clientID = Math.random().toString(36).substring(7);
 
@@ -34,6 +33,9 @@ const FormScreen = ({navigation}) => {
             rooms,
         };
 
+
+
+
 if (!name || !phone || !city || !street || !apartmentNo || !floorNo || !houseNo) {
             Alert.alert('Missing Fields', 'Please fill in all fields');
             return;
@@ -43,13 +45,19 @@ if (!name || !phone || !city || !street || !apartmentNo || !floorNo || !houseNo)
         setDoc(doc(db, "activeClients", clientID), data).then(r=>console.log(r));
         const clientsRef = doc(db, "clients", clientID);
         setDoc(clientsRef, data).then(() => {
-            Alert.alert('Success', 'Your order has been placed successfully');
+            //reset fields
+            setName('');
+            setPhone('');
+            setCity('');
+            setStreet('');
+            setApartmentNo('');
+            setFloorNo('');
+            setHouseNo('');
+            navigation.navigate('Rooms', {clientID});
         });
 
         }
-        console.log(data);
 
-        navigation.navigate('Rooms', {clientID});
     };
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -135,7 +143,7 @@ const styles = {
     container: {
         flexGrow: 1,
         padding: Spacing * 2,
-        backgroundColor: Colors.background,
+        // backgroundColor: Colors.,
     },
     heading: {
         fontSize: FontSize.large,
