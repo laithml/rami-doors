@@ -34,13 +34,17 @@ const RoomsAdd = ({ route, navigation }) => {
         return unsubscribe;
     }, [navigation]);
 
-    console.log('rooms', rooms);
 
     const handleDeleteRoom = async (roomID) => {
         try {
             const clientsRef = doc(db, 'clients', route.params?.clientID);
+            const ActiveclientsRef = doc(db, 'activeClients', route.params?.clientID);
+
             //delete room from client room array
             await updateDoc(clientsRef, {
+                rooms: rooms.filter((room) => room.roomID !== roomID),
+            });
+            await updateDoc(ActiveclientsRef, {
                 rooms: rooms.filter((room) => room.roomID !== roomID),
             });
             refreshRooms();
@@ -49,9 +53,19 @@ const RoomsAdd = ({ route, navigation }) => {
         }
     };
 
-    function handleRoomPress(roomName) {
-        console.log('Room name:', roomName);
+    function handleRoomPress(room) {
+        navigation.navigate('RoomInfo', {
+            clientID: route.params?.clientID,
+            roomID: room.roomID,
+            roomName: room.roomName,
+            color: room.color,
+            notes: room.notes,
+            measurement: room.measurement,
+            width: room.width,
+            doorID: room.doorID,
+        });
     }
+
 
     const handleDoneButton = () => {
         Alert.alert(
@@ -76,7 +90,7 @@ const RoomsAdd = ({ route, navigation }) => {
                     <TouchableOpacity
                         style={styles.roomContainer}
                         key={room.id}
-                        onPress={() => handleRoomPress(room.roomName)}
+                        onPress={() => handleRoomPress(room)}
                     >
                         <Text style={styles.roomName}>{room.roomName}</Text>
                         <TouchableOpacity

@@ -7,15 +7,16 @@ import {useRoute} from '@react-navigation/native';
 import {db} from "../config/firebase";
 import {doc, setDoc, deleteDoc, getDoc, updateDoc, collection, getDocs} from "firebase/firestore";
 
-const RoomInfo = ({route, navigation}) => {
-    const [roomName, setRoomName] = React.useState('');
-    const [color, setColor] = React.useState('');
-    const [notes, setNotes] = React.useState('');
-    const [measurement, setMeasurement] = React.useState('60');
-    const [width, setWidth] = React.useState('10');
-    const doorID = route.params?.doorID;
-    const image = route.params?.image;
-    const clientID = route.params?.clientID;
+    const RoomInfo = ({ route, navigation }) => {
+        const [roomName, setRoomName] = React.useState(route.params?.roomName || '');
+        const [color, setColor] = React.useState(route.params?.color || '');
+        const [notes, setNotes] = React.useState(route.params?.notes || '');
+        const [measurement, setMeasurement] = React.useState(route.params?.measurement || '60');
+        const [width, setWidth] = React.useState(route.params?.width || '10');
+        const doorID = route.params?.doorID;
+        const image = route.params?.image;
+        const clientID = route.params?.clientID;
+        const [roomID,setroomID] = React.useState(route.params?.roomID || '');
     const handleMeasurementChange = (value) => {
         setMeasurement(value);
     }; const handleWidthChange = (value) => {
@@ -30,33 +31,73 @@ const RoomInfo = ({route, navigation}) => {
         });
     };
 
-    const handleSubmit = () => {
-        const roomID = Math.random().toString(36).substring(7);
-        const data = {
-            roomID,
-            roomName,
-            color,
-            notes,
-            measurement,
-            doorID,
-        }
+        const handleSubmit = () => {
+            const data = {
+                roomID,
+                roomName,
+                color,
+                notes,
+                measurement,
+                width,
+                doorID,
+            };
 
-        const clientsRef = doc(db, "clients", clientID);
-        getDoc(clientsRef).then((docSnap) => {
-            //update the rooms array
-            const rooms = docSnap.data().rooms;
-            rooms.push(data);
-            updateDoc(clientsRef, {rooms}).then(() => {
-                console.log("Document successfully updated!");
-                navigation.navigate('Rooms', {clientID});
+            const clientsRef = doc(db, 'clients', clientID);
+            const ActiveclientsRef = doc(db, 'activeClients', clientID);
 
+            getDoc(clientsRef).then((docSnap) => {
+                const rooms = docSnap.data().rooms;
+
+                // Check if roomID already exists
+                const existingRoomIndex = rooms.findIndex((room) => room.roomID === roomID);
+                if (existingRoomIndex !== -1) {
+                    // Update existing room
+                    rooms[existingRoomIndex] = data;
+                } else {
+                    // Add new room
+                    rooms.push(data);
+                }
+
+                // Update rooms in clients collection
+                updateDoc(clientsRef, { rooms })
+                    .then(() => {
+                        console.log('Document successfully updated!');
+                        navigation.navigate('Rooms', { clientID });
+                    })
+                    .catch((error) => {
+                        console.error('Error updating document:', error);
+                    });
             });
-        });
+
+            getDoc(ActiveclientsRef).then((docSnap) => {
+                const rooms = docSnap.data().rooms;
+
+                // Check if roomID already exists
+                const existingRoomIndex = rooms.findIndex((room) => room.roomID === roomID);
+                if (existingRoomIndex !== -1) {
+                    // Update existing room
+                    rooms[existingRoomIndex] = data;
+                } else {
+                    // Add new room
+                    rooms.push(data);
+                }
+
+                // Update rooms in activeClients collection
+                updateDoc(ActiveclientsRef, { rooms })
+                    .then(() => {
+                        console.log('Document successfully updated!');
+                        navigation.navigate('Rooms', { clientID });
+                    })
+                    .catch((error) => {
+                        console.error('Error updating document:', error);
+                    });
+            });
+        };
 
 
-    };
-
-
+        if(roomID === '')
+            setroomID(Math.random().toString(36).substring(7));
+        console.log("Room id is: " + roomID + "\n\n\n\n\n")
     const renderMeasurementButtons = () => {
         const buttons = [];
         for (let i = 60; i <= 100; i += 5) {
@@ -83,9 +124,9 @@ const RoomInfo = ({route, navigation}) => {
                     key={i}
                     style={[
                         styles.measurementButton,
-                        measurement === i.toString() ? styles.measurementButtonSelected : null,
+                        width === i.toString() ? styles.measurementButtonSelected : null,
                     ]}
-                    onPress={() => setWidth(i.toString())}
+                    onPress={() => handleWidthChange(i.toString())}
                 >
                     <Text style={styles.measurementButtonText}>{i}</Text>
                 </TouchableOpacity>
