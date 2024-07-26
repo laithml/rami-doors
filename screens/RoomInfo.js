@@ -1,11 +1,10 @@
-import React, {useEffect} from 'react';
-import {View, Image, Text, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import React  from 'react';
+import {View, Image, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Keyboard} from 'react-native';
 import Colors from '../constants/Colors';
 import Spacing from '../constants/Spacing';
 import FontSize from '../constants/FontSize';
-import {useRoute} from '@react-navigation/native';
 import {db} from "../config/firebase";
-import {doc, setDoc, deleteDoc, getDoc, updateDoc, collection, getDocs} from "firebase/firestore";
+import {doc, getDoc, updateDoc} from "firebase/firestore";
 
 const RoomInfo = ({route, navigation}) => {
     const [roomName, setRoomName] = React.useState(route.params?.roomName || '');
@@ -19,12 +18,12 @@ const RoomInfo = ({route, navigation}) => {
     const [roomID, setroomID] = React.useState(route.params?.roomID || '');
 
 
-    if (image === undefined) {
-        //get the iamge from the database
+
+    if (image === undefined && doorID !== undefined) {
         const doorRef = doc(db, 'doors', doorID);
         getDoc(doorRef).then((docSnap) => {
-            let image = docSnap.data().imageUrl;
-            setImage(image);
+            let img = docSnap.data().imageUrl;
+            setImage(img);
         });
 
     }
@@ -150,6 +149,8 @@ const RoomInfo = ({route, navigation}) => {
     };
 
     return (
+        <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={100}>
+
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.label}>Room Name</Text>
             <TextInput
@@ -157,6 +158,9 @@ const RoomInfo = ({route, navigation}) => {
                 placeholder="Enter Room Name"
                 value={roomName}
                 onChangeText={setRoomName}
+                onSubmitEditing={Keyboard.dismiss}
+
+
             />
 
             <Text style={styles.label}>Door</Text>
@@ -175,6 +179,8 @@ const RoomInfo = ({route, navigation}) => {
                 placeholder="Enter Color"
                 value={color}
                 onChangeText={setColor}
+                onSubmitEditing={Keyboard.dismiss}
+
             />
 
             <Text style={styles.label}>Measurement</Text>
@@ -190,12 +196,15 @@ const RoomInfo = ({route, navigation}) => {
                 multiline={true}
                 numberOfLines={4}
                 textAlignVertical="top"
+                onSubmitEditing={Keyboard.dismiss}
+
             />
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>ADD</Text>
             </TouchableOpacity>
         </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 const styles = {

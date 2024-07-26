@@ -4,7 +4,7 @@ import { Text } from 'react-native-paper';
 import Colors from '../constants/Colors';
 import { FontAwesome } from '@expo/vector-icons';
 import { db } from '../config/firebase';
-import { doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const RoomsAdd = ({ route, navigation }) => {
     const [rooms, setRooms] = useState([]);
@@ -36,21 +36,41 @@ const RoomsAdd = ({ route, navigation }) => {
 
 
     const handleDeleteRoom = async (roomID) => {
-        try {
-            const clientsRef = doc(db, 'clients', route.params?.clientID);
-            const ActiveclientsRef = doc(db, 'activeClients', route.params?.clientID);
 
-            //delete room from client room array
-            await updateDoc(clientsRef, {
-                rooms: rooms.filter((room) => room.roomID !== roomID),
-            });
-            await updateDoc(ActiveclientsRef, {
-                rooms: rooms.filter((room) => room.roomID !== roomID),
-            });
-            refreshRooms();
-        } catch (error) {
-            console.error('Error deleting room:', error);
-        }
+        Alert.alert(
+            'Are you sure?',
+            'This room will be deleted from the client',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'Delete',
+                    onPress: async () => {
+                        try {
+                            const clientsRef = doc(db, 'clients', route.params?.clientID);
+                            const ActiveclientsRef = doc(db, 'activeClients', route.params?.clientID);
+
+                            //delete room from client room array
+                            await updateDoc(clientsRef, {
+                                rooms: rooms.filter((room) => room.roomID !== roomID),
+                            });
+                            await updateDoc(ActiveclientsRef, {
+                                rooms: rooms.filter((room) => room.roomID !== roomID),
+                            });
+                            refreshRooms();
+                        } catch (error) {
+                            console.error('Error deleting room:', error);
+                        }
+                    },
+                    style: 'destructive',
+                },
+            ],
+            {cancelable: false}
+        );
+
     };
 
     function handleRoomPress(room) {
@@ -132,7 +152,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 80,
         marginBottom: 10,
-        borderWidth: 1,
+        borderWidth: 3,
         borderColor: Colors.primary,
         borderRadius: 10,
         padding: 10,
@@ -148,7 +168,7 @@ const styles = StyleSheet.create({
     addRoomContainer: {
         alignItems: 'center',
         marginTop: 10,
-        borderWidth: 2,
+        borderWidth: 4,
         borderColor: Colors.primary,
         borderRadius: 10,
         padding: 10,

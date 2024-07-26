@@ -168,13 +168,10 @@ const styles = StyleSheet.create({
         height: 100,
     },
     doneButton: {
-        backgroundColor: "#00cc00",
-    },
-    deleteButton: {
-        backgroundColor: "#cc0000",
+        backgroundColor: "#1f6e3c",
     },
     editButton: {
-        backgroundColor: "#ffcc00",
+        backgroundColor: "#398ad7",
     },
     listContent: {
         paddingBottom: 16,
